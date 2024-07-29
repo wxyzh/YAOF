@@ -1,16 +1,17 @@
 name: X86-OpenWrt
 
 on:
+  workflow_dispatch:
 #  schedule:
 #    - cron: 5 6 * * 0
-  workflow_dispatch:
+#  workflow_dispatch:
 #  watch:
 #    types: started
 
 jobs:
   build:
     runs-on: ubuntu-24.04
-    if: github.event.repository.owner.id == github.event.sender.id
+    #if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Show system
@@ -138,9 +139,9 @@ jobs:
         allowUpdates: true
         prerelease: false
         tag: ${{ env.latest_release }}
-        commit: X86
+        commit: 23.05
         replacesArtifacts: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.TOKEN }}
         artifacts: ./artifact/*.zip
     - name: Print Disk Space After
       run: df -h
