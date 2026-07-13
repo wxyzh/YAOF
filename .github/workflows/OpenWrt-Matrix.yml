@@ -211,6 +211,13 @@ jobs:
           sudo -E chmod -R 755 ./08_fix_permissions.sh
           /bin/bash 08_fix_permissions.sh
 
+      - name: Diy Config
+        if: matrix.name == 'X86'
+        working-directory: ${{ github.workspace }}/openwrt
+        run: |
+          chmod 755 ./09_diy.sh
+          /bin/bash 09_diy.sh
+
       - name: Make Config
         working-directory: ${{ github.workspace }}/openwrt
         run: |
@@ -308,7 +315,7 @@ jobs:
           allowUpdates: true
           prerelease: false
           tag: ${{ env.latest_release }}
-          commit: "25.12"
+          commit: "X86_25.12"
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: ./artifact/*.zip
