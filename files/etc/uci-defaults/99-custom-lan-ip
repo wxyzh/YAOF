@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# 本地定制：修改默认管理地址 192.168.1.1 -> 192.168.11.254
+#
+# 上游 YAOOF 的 config_generate 会写入 192.168.1.1；ImageBuilder 架构下
+# 无法直接改 base-files 包内的这个文件，因此在首次开机时用 uci-defaults
+# 覆盖（这是 OpenWrt 官方推荐的增量定制方式）。
+#
+# 注意：boot 服务里的 uci_apply_defaults 是用 `.` source 本文件的，所以
+# 这里绝不能 `exit`（会中断整个 boot）；用 return 或直接收尾即可。
+
+DEFAULT_IP="192.168.1.1"
+TARGET_IP="192.168.11.254"
+
+__lan_ip="$(uci -q get network.lan.ipaddr)"
+__lan_cidr="${__lan_ip%%/*}"
+
+if [ "$__lan_cidr" = "$DEFAULT_IP" ]; then
+	case "$__lan_ip" in
+		*/*) uci -q set network.lan.ipaddr="$TARGET_IP/${__lan_ip##*/}" ;;
+		*)   uci -q set network.lan.ipaddr="$TARGET_IP" ;;
+	esac
+
+	[ "$(uci -q get network.lan.gateway)" = "$DEFAULT_IP" ] && \
+		uci -q set network.lan.gateway="$TARGET_IP"
+	[ "$(uci -q get dhcp.lan.dns)" = "$DEFAULT_IP" ] && \
+		uci -q set dhcp.lan.dns="$TARGET_IP"
+fi
+
+# 无需显式 `uci commit`：uci_apply_defaults 会在所有脚本执行完后统一 commit。

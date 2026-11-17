@@ -1,0 +1,13 @@
+# 固件内 shell 脚本必须保持 LF 行尾：
+# 本仓库在 Windows 上开发（core.autocrlf=true），若不做约束，
+# 脚本会以 CRLF 入库，在 Linux/OpenWrt 上执行时 shebang 解析会失败。
+*.sh            text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+
+# 无扩展名的脚本（uci-defaults / init.d / hotplug 等）按路径约束
+files/etc/uci-defaults/*  text eol=lf
+files/etc/init.d/*        text eol=lf
+files/etc/hotplug.d/**    text eol=lf
+files/etc/rc.local        text eol=lf
+scripts/*                 text eol=lf
